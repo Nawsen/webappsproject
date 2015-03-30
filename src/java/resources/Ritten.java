@@ -88,7 +88,7 @@ public class Ritten
     
     @Path("{id}")
     @DELETE
-    public void removeUser(@PathParam("id") Long id)
+    public void removeRit(@PathParam("id") Long id)
     {
         Rit rit = em.find(Rit.class, id);
         
