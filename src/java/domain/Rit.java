@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -30,14 +31,24 @@ public class Rit {
     private String title;
     
     private long afstand;
+    
+    @ManyToOne
+    private User user;
 
     public Rit() {
     }
 
     public Rit(String title, long afstand) {
-        this.id = id;
         this.title = title;
         this.afstand = afstand;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
     
     

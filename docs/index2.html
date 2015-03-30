@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>WannabeStrava API Documentation</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" media="screen" href="bootstrap.min.css">
+        <script src="jquery.min.js"></script>
+        <script src="bootstrap.min.js"></script>
+        <style>
+            body {
+                padding-top: 60px
+            }
+            
+            #credentials, #users, #lists, #reminders {
+                padding-top: 70px;
+                margin-top: -70px;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">  
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <p class="navbar-brand">WannabeStrava API</p>
+                </div>
+
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="#credentials">Credentials</a></li>
+                        <li><a href="#users">Users</a></li>
+                        <li><a href="#lists">Lists</a></li>
+                        <li><a href="#reminders">Reminders</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="container-fluid">
+            <h1>API Documentation</h1>
+
+            <p>
+                This document describes the API used for the WannabeStrava webservice example.
+                All URLs below are relative and should be prefixed with
+                <mark>http://localhost:8080/reminders/api</mark>.
+            </p>
+
+            <p>
+                Whenever the service returns a <span class="label label-warning">400 Bad Request</span>, the body of the response will contain one or more error names.
+                See the corresponding domain rules to find out what exactly went wrong.
+                The generic <span class="label label-default">JSON</span> error means that either your input was invalid JSON or you
+                supplied a value of an incorrect type for one of the fields.
+            </p>
+            
+            <h2><a id="credentials">Credentials</a></h2>
+            
+            <h3>Domain rules</h3>
+            
+            <ul>
+                <li><span class="label label-default">CREDENTIALS_NAME</span> Credentials must contain a name.</li>
+                <li><span class="label label-default">CREDENTIALS_PASSWORD</span> Credentials must contain a password.</li>
+				<li>Users have automatically generated ids.</li>
+            </ul>
+            
+            <h3>Checking your credentials</h3>
+            
+            <p>
+                This resource is meant to facilitate implementing client-side login by allowing you to check your credentials
+                before attempting to authenticate a request with them.
+            </p>
+            <p>
+                To do so, use the <span class="label label-primary">POST /credentials</span> command.
+            </p>
+            <p>
+                This command expects input similar to:
+            </p>          
+<pre>
+{
+    "name" : "superuser",
+    "password" : "supersecret"
+}
+</pre>
+            <p>
+                This command returns <span class="label label-success">200 OK</span> along with an array of roles for the given name,
+                or <span class="label label-warning">400 Bad Request</span> if the input was invalid.
+            </p>
+            
+            <p>
+                This command obviously does not require authentication.
+            </p>
+            
+            <h2><a id="users">Users</a></h2>
+
+            <h3>Domain rules</h3>
+            
+            <ul>
+                <li><span class="label label-default">USER_NAME</span> A name is required, must be unique, can only contain alphabetical characters and must be between 8 and 255 characters in size.</li>
+                <li><span class="label label-default">USER_PASSWORD</span> A password is required and must be between 8 and 255 characters in size.</li>
+                <li><span class="label label-default">USER_EMAIL</span> An email is required</li>
+            </ul>
+            
+            <h3>Creating a new user</h3>
+            
+            <p>
+                To create a new user account, use the <span class="label label-primary">POST /users</span> command.
+            </p>
+            <p>
+                This command expects input similar to:
+            </p>          
+<pre>
+{
+    "name" : "superuser",
+    "password" : "supersecret",
+    "email" : "mail@strava.com"
+}
+</pre>
+            <p>
+                This command returns <span class="label label-success">201 Created</span> upon success or <span class="label label-warning">400 Bad Request</span>
+                if the input was invalid.
+            </p>
+            <p>
+                This command currently does not require authentication (anyone can create a user account).
+            </p>
+            
+            <h3>Listing all users</h3>
+            
+            <p>
+                To list all users, use the <span class="label label-primary">GET /users</span> command.
+            </p>
+            <p>
+                This command should return <span class="label label-success">200 OK</span> with a body similar to:
+            </p>
+<pre>
+[
+    {
+        "id" : "1",
+        "name" : "Super User"
+    },
+    {
+        "id" : "2",
+        "name" : "Jeremy Clarkson"
+    }
+]
+</pre>
+            
+            <p>
+                This command does not require authentication (user information is public).
+            </p>
+            
+            <h3>Requesting user information</h3>
+            
+            <p>
+                To request user information, use the <span class="label label-primary">GET /users/{name}</span> command.
+            </p>
+            <p>
+                This command returns <span class="label label-success">200 OK</span> with a body similar to:
+            </p>
+<pre>
+{
+	"id" : "1",
+	"name" : "Cleremy Jarskon"
+}
+</pre>
+            <p>
+                or <span class="label label-warning">404 Not Found</span> if there is no user with the given name.
+            </p>
+           
+            <p>
+                This command does not require authentication (user information is public).
+            </p>
+            
+            <h3>Updating user information</h3>
+            
+            <p>
+                To update user information, use the <span class="label label-primary">PUT /users/{name}</span> command.
+            </p>
+            <p>
+                This command expects input similar to:
+            </p>
+<pre>
+{
+    "name" : "Jeremy Clarkson",
+    "password" : "password123",
+    
+}
+</pre>
+            <p>
+                All fields are optional. You only need to specify those fields you wish to change.
+                <code>null</code> values are not accepted.
+            </p>
+            <p>
+                This command returns <span class="label label-success">204 No Content</span> upon success, <span class="label label-warning">400 Bad Request</span>
+                if the input was invalid or <span class="label label-warning">404 Not Found</span> if there is no user with the given name.
+            </p>
+            <p>
+                This command requires authentication. You need to supply either admin credentials or credentials for the user with the specified name.
+                This command returns <span class="label label-warning">403 Forbidden</span> if you fail to do so.
+            </p>
+            
+            <h3>Deleting a user</h3>
+            
+            <p>
+                To delete a user account, use the <span class="label label-primary">DELETE /users/{id}</span> command.
+            </p>
+            <p>
+                This command returns <span class="label label-success">204 No Content</span> upon success or <span class="label label-warning">404 Not Found</span>
+                if there is no user with the given name.
+            </p>
+            <p>
+                This command requires authentication. You need to supply either admin credentials or credentials for the user with the specified name.
+                This command returns <span class="label label-warning">403 Forbidden</span> if you fail to do so.
+            </p>
+            
+            <h2><a id="lists">Ritten</a></h2>
+            
+            <h3>Domain rules</h3>
+            
+            <ul>
+                <li><span class="label label-default">RIT_TITLE</span> A list must have a non-empty title.</li>
+				<li><span class="label label-default">RIT_AFSTAND</span> A list must have a non-empty title.</li>
+                <li>Ritten have automatically generated ids.</li>
+                <li>The rit owner is automatically set to the authenticated user.</li>
+            </ul>
+            
+            <h3>Creating a new list</h3>
+            
+            <p>
+                To create a new list, use the <span class="label label-primary">POST /users/{id}/ritten</span> command.
+            </p>
+            <p>
+                This command expects input similar to:
+            </p>          
+<pre>
+{
+    "title" : "Congoberg",
+    "owner" : "Jeremy Clarkson"
+}
+</pre>
+            <p>
+                Setting the <code>owner</code> is optional, the authenticated user will be filled in by default.
+            </p>
+            <p>
+                This command returns <span class="label label-success">201 Created</span> upon success or <span class="label label-warning">400 Bad Request</span>
+                if the input was invalid.
+            </p>
+            <p>
+                This command requires authentication. You need to supply user credentials.
+                This command returns <span class="label label-warning">403 Forbidden</span> if you fail to do so.
+            </p>
+            
+            <h3>Listing your ritten</h3>
+            
+            <p>
+                To get an overview of all your ritten, use the <span class="label label-primary">GET /users/{id}/ritten</span> command.
+            </p>
+            <p>
+                This command should return <span class="label label-success">200 OK</span> with a body similar to:
+            </p>
+<pre>
+[
+    {
+        "id" : 1,
+        "title" : "Congoberg",
+        "afstand" : 69
+    },
+    {
+        "id" : 2,
+        "title" : "Arne's boerengat",
+        "afstand" : 2
+    }
+]
+</pre>
+            <p>
+                This command requires authentication. You need to supply either admin or user credentials.
+                This command returns <span class="label label-warning">403 Forbidden</span> if you fail to do so.
+            </p>
+            
+            <h3>Requesting rit information</h3>
+            
+            <p>
+                To request rit information, use the <span class="label label-primary">GET /ritten/{ritid}</span> command.
+            </p>
+            <p>
+                This command returns <span class="label label-success">200 OK</span> with a body similar to:
+            </p>
+<pre>
+{
+    "id" : 2,
+    "owner" : "Arne Knockaert",
+    "title" : "Arne's boerengat",
+    "afstand" : 2
+}
+</pre>
+            <p>
+                or <span class="label label-warning">404 Not Found</span> if there is no rit with the given id.
+            </p>
+            <p>
+                This command requires authentication. You need to supply either admin credentials or credentials for the user who owns the rit.
+                This command returns <span class="label label-warning">403 Forbidden</span> if you fail to do so.
+            </p>
+            
+            <h3>Updating rit information</h3>
+            
+            <p>
+                To update rit information, use the <span class="label label-primary">PUT /ritten/{ritid}</span> command.
+            </p>
+            <p>
+                This command expects input similar to:
+            </p>
+<pre>
+{
+    "title" : "Bergsken",
+    "owner" : "someotheruser"
+}
+</pre>
+            <p>
+                All fields are optional. You only need to specify those fields you wish to change.
+            </p>
+            <p>
+                This command returns <span class="label label-success">204 No Content</span> upon success, <span class="label label-warning">400 Bad Request</span>
+                if the input was invalid or <span class="label label-warning">404 Not Found</span> if there is no rit with the given id
+                or if you specified an unknown name.
+            </p>
+            <p>
+                This command requires authentication. You need to supply either admin credentials or credentials for the user who owns the rit.
+                This command returns <span class="label label-warning">403 Forbidden</span> if you fail to do so.
+                Only admins can change the owner of a rit.
+            </p>
+            
+            <h3>Deleting a rit</h3>
+            
+            <p>
+                To delete a rit, use the <span class="label label-primary">DELETE /ritten/{ritid}</span> command.
+            </p>
+            <p>
+                This command returns <span class="label label-success">204 No Content</span> upon success or <span class="label label-warning">404 Not Found</span>
+                if there is no rit with the given id.
+            </p>
+            <p>
+                This command requires authentication. You need to supply either admin credentials or credentials for the user who owns the rit.
+                This command returns <span class="label label-warning">403 Forbidden</span> if you fail to do so.
+            </p>
+            
+        </div>
+    </body>
+</html>

@@ -88,6 +88,7 @@ public class Users
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addRit(@PathParam("id") Long id, Rit rit)
     {
+        
         User user = em.find(User.class, id);
         
         if (user == null) {
@@ -100,6 +101,7 @@ public class Users
         if (rit.getTitle().length() < 3){
             throw new BadRequestException("titel te kort");
         }
+        rit.setUser(user);
         user.addRit(rit);
         em.persist(rit);
         em.persist(user);
@@ -152,6 +154,9 @@ public class Users
             // Ter illustratie ondersteunen we hier enkel het wijzigen van het paswoord en de
             // fullName. Hoe je een volledige update kan ondersteunen, is te vinden in het grote
             // voorbeeld 'Reminders'.
+            
+            String name = jsonUser.getString("name", null);
+            user.setName(name);
             
             String password = jsonUser.getString("password", null);
             if (password != null) {

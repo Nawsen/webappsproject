@@ -61,12 +61,12 @@ public class Ritten
     @Path("{id}")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public void updateUser(@PathParam("id") Long id, InputStream input)
+    public void updateRit(@PathParam("id") Long id, InputStream input)
     {
         Rit rit = em.find(Rit.class, id);
         
         if (rit == null) {
-            throw new NotFoundException("Gebruiker niet gevonden");
+            throw new NotFoundException("rit niet gevonden");
         }
         
         try (JsonReader jsonInput = Json.createReader(input)) {
@@ -96,6 +96,10 @@ public class Ritten
             throw new NotFoundException("rit niet gevonden");
         }
         
+        rit.getUser().getRitten().remove(rit);
+        
         em.remove(rit);
+        //em.getEntityManagerFactory().getCache().evictAll();
+        
     }
 }
