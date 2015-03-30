@@ -1,6 +1,7 @@
 
 package resources;
 
+import domain.Rit;
 import domain.User;
 import java.io.InputStream;
 import java.net.URI;
@@ -82,6 +83,30 @@ public class Users
         return Response.created(URI.create("/" + user.getName())).build();
     }
     
+    @Path("{id}/ritten")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addRit(@PathParam("id") Long id, Rit rit)
+    {
+        User user = em.find(User.class, id);
+        
+        if (user == null) {
+            throw new NotFoundException("Gebruiker niet gevonden");
+        }
+        
+        rit.setTitle(rit.getTitle().trim());
+        rit.setAfstand(rit.getAfstand());
+        
+        if (rit.getTitle().length() < 3){
+            throw new BadRequestException("titel te kort");
+        }
+        user.addRit(rit);
+        em.persist(rit);
+        em.persist(user);
+        
+        return Response.created(URI.create("/" + rit.getTitle())).build();
+    }
+    
     @Path("{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -94,6 +119,20 @@ public class Users
         }
         
         return user;
+    }
+    
+     @Path("{id}/ritten")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Rit> getRitten(@PathParam("id") Long id)
+    {
+        User user = em.find(User.class, id);
+                
+        if (user == null) {
+            throw new NotFoundException("Gebruiker niet gevonden");
+        }
+        
+        return user.getRitten();
     }
     
     @Path("{id}")

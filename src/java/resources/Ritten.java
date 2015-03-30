@@ -43,124 +43,59 @@ public class Ritten
     @PersistenceContext
     private EntityManager em;
     
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<User> getAllUsers(@QueryParam("first") @DefaultValue("0") int first, @QueryParam("results") @DefaultValue("10") int results)
-    {
-        TypedQuery<User> queryFindAll = em.createNamedQuery("User.findAll", User.class);
-        queryFindAll.setFirstResult(first);
-        queryFindAll.setMaxResults(results);
-        return queryFindAll.getResultList();
-    }
-    
-    
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response addUser(User user)
-    {
-        user.setName(user.getName().trim());
-        user.setEmail(user.getEmail().trim());
-        user.setPassword(user.getPassword().trim());
-        
-        if (user.getName().length() < 5) {
-            throw new BadRequestException("Username ongeldig");
-        }
-        
-        if (em.find(User.class, user.getId()) != null) {
-            throw new BadRequestException("Username al in gebruik");
-        }
-        
-        if (user.getPassword().length() < 5) {
-            throw new BadRequestException("Paswoord ongeldig");
-        }
-        
-        
-        user.setPassword(user.getPassword().trim());
-        
-        user.setEmail(user.getEmail().toLowerCase().trim());
-        
-        em.persist(user);
-        
-        return Response.created(URI.create("/" + user.getName())).build();
-    }
-    
     @Path("{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public User getUser(@PathParam("id") Long id)
+    public Rit getRit(@PathParam("id") Long id)
     {
-        User user = em.find(User.class, id);
+        Rit rit= em.find(Rit.class, id);
         
-        if (user == null) {
+        if (rit == null) {
             throw new NotFoundException("Gebruiker niet gevonden");
         }
         
-        return user;
+        return rit;
     }
     
-    @Path("{id}/ritten")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Rit> getRitten(@PathParam("id") Long id)
-    {
-        User user = em.find(User.class, id);
-        
-        
-        
-        if (user == null) {
-            throw new NotFoundException("Gebruiker niet gevonden");
-        }
-        
-        return user.getRitten();
-    }
     
     @Path("{id}")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public void updateUser(@PathParam("id") Long id, InputStream input)
     {
-        User user = em.find(User.class, id);
+        Rit rit = em.find(Rit.class, id);
         
-        if (user == null) {
+        if (rit == null) {
             throw new NotFoundException("Gebruiker niet gevonden");
         }
         
         try (JsonReader jsonInput = Json.createReader(input)) {
-            JsonObject jsonUser = jsonInput.readObject();
-
-            // Ter illustratie ondersteunen we hier enkel het wijzigen van het paswoord en de
-            // fullName. Hoe je een volledige update kan ondersteunen, is te vinden in het grote
-            // voorbeeld 'Reminders'.
+            JsonObject jsonRit = jsonInput.readObject();
             
-            String password = jsonUser.getString("password", null);
-            if (password != null) {
-                if (password.trim().length() < 8) {
-                    throw new BadRequestException("Paswoord ongeldig");
-                } else {
-                    user.setPassword(password.trim());
-                }
+            String titel = jsonRit.getString("titel", null).trim();
+            if(titel.length() >3){
+                rit.setTitle(titel);
             }
-
-            String email = jsonUser.getString("email", null);
-            if (email != null) {
-                user.setEmail(email.trim());
-            }
-
+            long afstand = jsonRit.getInt("afstand", 0);
+            
+            rit.setAfstand(afstand);
+            
         } catch (JsonException | ClassCastException ex) {
             throw new BadRequestException("Ongeldige JSON invoer");
         }
+        
     }
     
     @Path("{id}")
     @DELETE
     public void removeUser(@PathParam("id") Long id)
     {
-        User user = em.find(User.class, id);
+        Rit rit = em.find(Rit.class, id);
         
-        if (user == null) {
-            throw new NotFoundException("Gebruiker niet gevonden");
+        if (rit == null) {
+            throw new NotFoundException("rit niet gevonden");
         }
         
-        em.remove(user);
+        em.remove(rit);
     }
 }

@@ -85,7 +85,9 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-    
+    public void addRit(Rit rit){
+        ritten.add(rit);
+    }
     
     
 }
