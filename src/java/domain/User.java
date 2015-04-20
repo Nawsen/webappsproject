@@ -14,6 +14,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.Length;
 
 /**
  *
@@ -30,10 +32,16 @@ public class User {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long id;
     
+    @NotNull
+    @Length(min = 5, max = 255)
     private String name;
     
+    @NotNull
+    @Length(min = 7, max = 255)
     private String password;
     
+    @NotNull
+    @Length(min = 7, max = 255)
     private String email;
     
     @OneToMany(mappedBy="user")

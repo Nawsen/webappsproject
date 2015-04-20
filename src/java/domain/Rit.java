@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.Length;
 
 /**
  *
@@ -28,7 +30,10 @@ public class Rit {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long id;
     
+    @NotNull(message = "title mag niet leeg zijn")
+    @Length(min = 5, max = 255, message = "title tussen 5 en 255")
     private String title;
+    @NotNull(message = "afstand mag niet leeg zijn")
     
     private long afstand;
     
