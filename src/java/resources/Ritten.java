@@ -23,6 +23,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
@@ -31,8 +32,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 
 /**
@@ -49,6 +52,9 @@ public class Ritten
     
     @Resource
     private Validator validator;
+    
+    @Context
+    private SecurityContext context;
     
     @Path("{id}")
     @GET
@@ -71,6 +77,10 @@ public class Ritten
     public void updateRit(@PathParam("id") Long id, InputStream input)
     {
         Rit rit = em.find(Rit.class, id);
+        
+        if(!context.getUserPrincipal().getName().equals(rit.getUser().getName()) && !context.isUserInRole("admin") ){
+            throw new ForbiddenException();
+        }
         
         if (rit == null) {
             throw new NotFoundException("rit niet gevonden");
@@ -107,6 +117,10 @@ public class Ritten
     public void removeRit(@PathParam("id") Long id)
     {
         Rit rit = em.find(Rit.class, id);
+        
+        if(!context.getUserPrincipal().getName().equals(rit.getUser().getName()) && !context.isUserInRole("admin") ){
+            throw new ForbiddenException();
+        }
         
         if (rit == null) {
             throw new NotFoundException("rit niet gevonden");

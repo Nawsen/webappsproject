@@ -22,6 +22,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
@@ -30,8 +31,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 /**
  *
@@ -46,7 +49,9 @@ public class Users {
     private EntityManager em;
     @Resource
     private Validator validator;
-
+    @Context
+    private SecurityContext context;
+    
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<User> getAllUsers(@QueryParam("first") @DefaultValue("0") int first, @QueryParam("results") @DefaultValue("10") int results) {
@@ -64,7 +69,9 @@ public class Users {
         user.setPassword(user.getPassword().trim());
 
         user.setEmail(user.getEmail().toLowerCase().trim());
-
+        
+        user.getRoles().add("user");
+        
         Set<ConstraintViolation<User>> fouten = validator.validate(user);
 
         if (!fouten.isEmpty()) {
@@ -83,9 +90,13 @@ public class Users {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addRit(@PathParam("id") Long id, Rit rit) {
-
+        
         User user = em.find(User.class, id);
 
+        if(!context.getUserPrincipal().getName().equals(user.getName()) && !context.isUserInRole("admin") ){
+            throw new ForbiddenException();
+        }
+        
         if (user == null) {
             throw new NotFoundException("Gebruiker niet gevonden");
         }
@@ -131,6 +142,10 @@ public class Users {
     public List<Rit> getRitten(@PathParam("id") Long id) {
         User user = em.find(User.class, id);
 
+        if(!context.getUserPrincipal().getName().equals(user.getName()) && !context.isUserInRole("admin") ){
+            throw new ForbiddenException();
+        }
+        
         if (user == null) {
             throw new NotFoundException("Gebruiker niet gevonden");
         }
@@ -144,6 +159,10 @@ public class Users {
     public void updateUser(@PathParam("id") Long id, InputStream input) {
         User user = em.find(User.class, id);
 
+        if(!context.getUserPrincipal().getName().equals(user.getName()) && !context.isUserInRole("admin") ){
+            throw new ForbiddenException();
+        }
+        
         if (user == null) {
             throw new NotFoundException("Gebruiker niet gevonden");
         }
@@ -180,7 +199,9 @@ public class Users {
     @DELETE
     public void removeUser(@PathParam("id") Long id) {
         User user = em.find(User.class, id);
-
+        if(!context.getUserPrincipal().getName().equals(user.getName()) && !context.isUserInRole("admin") ){
+            throw new ForbiddenException();
+        }
         if (user == null) {
             throw new NotFoundException("Gebruiker niet gevonden");
         }

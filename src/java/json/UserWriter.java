@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonWriter;
 import javax.ws.rs.Produces;
@@ -44,6 +45,12 @@ public class UserWriter implements MessageBodyWriter<User>
         jsonUser.add("id", user.getId());
         jsonUser.add("name", user.getName());
         jsonUser.add("email", user.getEmail());
+        
+        JsonArrayBuilder jsonRoles = Json.createArrayBuilder();
+        for (String role : user.getRoles()) {
+            jsonRoles.add(role); 
+        }
+        jsonUser.add("roles", jsonRoles);
         
         try (JsonWriter out = Json.createWriter(entityStream)) {
             out.writeObject(jsonUser.build());

@@ -1,16 +1,56 @@
-<!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<html>
+<!doctype html>
+<html lang="en">
     <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Reminders User List</title>
+        <meta charset="utf-8">
     </head>
     <body>
-        <div>TODO write content</div>
+        
+        <h3>Registered users:</h3>
+        <ul id="users">
+        </ul>
+        
+        <h3>Add a user:</h3>
+        <form>
+            <p>
+                <label for="username">Username:</label>
+                <input id="username" type="text">
+            </p>
+            <p>
+                <label for="password">Password:</label>
+                <input id="password" type="password">
+            </p>
+            <p>
+                <label for="email">Email:</label>
+                <input id="email" type="email">
+            </p>
+            <p>
+                <button id="submit" type="button">Add</button>
+            </p>
+        </form>
+        
+        <h3>Login:</h3>
+        <form>
+            <p>
+                <label for="username">Username:</label>
+                <input id="usernamelogin" type="text">
+            </p>
+            <p>
+                <label for="password">Password:</label>
+                <input id="passwordlogin" type="password">
+            </p>
+            
+            <p>
+                <button id="submitlogin" type="button">Login</button>
+            </p>
+        </form>
+        
+        <ul id="ritten">
+        </ul>
+        
+        <p id="error"></p>
+        
+        <script src="js/jquery-2.1.0.js"></script>
+        <script src="js/userlist.js"></script>
     </body>
 </html>
