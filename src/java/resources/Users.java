@@ -152,6 +152,22 @@ public class Users {
 
         return user.getRitten();
     }
+    
+//    @Path("{name}/ritten")
+//    @GET
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public List<Rit> getRitten(@PathParam("name") String name) {
+//    User user = (User) em.createQuery("SELECT * FROM TBL_USER WHERE name = " + name);
+//        if(!context.getUserPrincipal().getName().equals(user.getName()) && !context.isUserInRole("admin") ){
+//            throw new ForbiddenException();
+//        }
+//        
+//        if (user == null) {
+//            throw new NotFoundException("Gebruiker niet gevonden");
+//        }
+//
+//        return user.getRitten();
+//    }
 
     @Path("{id}")
     @PUT

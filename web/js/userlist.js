@@ -1,9 +1,36 @@
 onload = function()
 {
+    $("#register").hide();
+    $("#loggedin").hide();
+    $("#showregister").click(function (){
+       $("#register").show();
+       $("#showregister").hide();
+    });
     updateList();
     $("#submit").click(submitUser);
+    $("#submitlogin").click(login);
 };
-
+function getUserId(name)
+{
+    var id = null;
+    var request = new XMLHttpRequest();
+    request.open("GET", "http://localhost:8080/webappsproject/api/users");
+    request.onload = function() {
+        if (request.status === 200) {
+            var users = JSON.parse(request.responseText);
+            for (var i = 0; i < users.length; i++) {
+                if (users[i].name) {
+                    getritten(users[i].id);
+                }
+                
+            }
+           
+        } else {
+            $("#error").text("Unable to login wrong username");
+        }
+    };
+    request.send(null);
+}
 function updateList()
 {
     var request = new XMLHttpRequest();
@@ -28,27 +55,33 @@ function updateList()
     };
     request.send(null);
 }
+function login(){
+    var username = $("#usernamelogin").val();
+var password = $("#passwordlogin").val();  
 
-function updateList()
-{
+getUserId(username);
+
+
+}
+function getritten(id){
+    var username = $("#usernamelogin").val();
+var password = $("#passwordlogin").val();  
     var request = new XMLHttpRequest();
-    request.open("GET", "http://localhost:8080/webappsproject/api/users");
+    
+    request.open("GET", "http://localhost:8080/webappsproject/api/users/" + id + "/ritten", true);
+    request.setRequestHeader("Authorization", "Basic " + window.btoa(username + ":" + password));
     request.onload = function() {
         if (request.status === 200) {
-            $("#users").empty();
-            var users = JSON.parse(request.responseText);
-            for (var i = 0; i < users.length; i++) {
+            $("#ritten").empty();
+            var ritten = JSON.parse(request.responseText);
+            for (var i = 0; i < ritten.length; i++) {
                 var item = $("<li>");
-                if (users[i].name) {
-                    item.text(users[i].name + " (" + users[i].email + ")");
-                } else {
-                    item.text(users[i].email);
-                }
-                $("#users").append(item);
+                item.text(ritten[i].title + " (" + ritten[i].afstand + (")"));
+                $("#ritten").append(item);
             }
             $("#error").empty();
         } else {
-            $("#error").text("Unable to load user list");
+            $("#error").text("Unable to login to server with " + id + username + password);
         }
     };
     request.send(null);
@@ -67,6 +100,8 @@ function submitUser()
         if (request.status === 201) {
             $("#error").empty();
             updateList();
+            $("#showregister").show();
+            $("#register").hide();
         } else {
             $("#error").text("Unable to add user");
         }

@@ -9,7 +9,8 @@
         <h3>Registered users:</h3>
         <ul id="users">
         </ul>
-        
+        <button id="showregister" type="button">Register</button>
+        <div id="register">
         <h3>Add a user:</h3>
         <form>
             <p>
@@ -28,7 +29,8 @@
                 <button id="submit" type="button">Add</button>
             </p>
         </form>
-        
+        </div>
+        <div id="login">
         <h3>Login:</h3>
         <form>
             <p>
@@ -44,10 +46,27 @@
                 <button id="submitlogin" type="button">Login</button>
             </p>
         </form>
-        
+        </div>
+        <div id="loggedin">
+        <button id="logout" type="button">Logout</button>
         <ul id="ritten">
         </ul>
-        
+        <h3>Voeg ritten toe:</h3>
+        <form>
+            <p>
+                <label for="titlerit">title:</label>
+                <input id="titlerit" type="text">
+            </p>
+            <p>
+                <label for="afstandrit">Afstand:</label>
+                <input id="afstandrit" type="password">
+            </p>
+            
+            <p>
+                <button id="submitrit" type="button">Add</button>
+            </p>
+        </form>
+        </div>
         <p id="error"></p>
         
         <script src="js/jquery-2.1.0.js"></script>
